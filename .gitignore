@@ -13,3 +13,6 @@ sweep_out/
 *.log
 .DS_Store
 Thumbs.db
+
+# Personal terms for privacy_check.py. Never commit this.
+.private-terms
