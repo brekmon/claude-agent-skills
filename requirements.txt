@@ -1,0 +1,3 @@
+# Runtime for the skill's bundled scripts. ffmpeg / ffprobe are also required
+# and are NOT pip-installable: install them from your platform's packages.
+numpy>=1.24

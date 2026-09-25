@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: tests (python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+
+      # No ffmpeg. `load` decodes media and is excluded; everything downstream
+      # of it is pure numpy and is tested directly on synthetic signals shaped
+      # like the real problem: a brief bright transient on a constant floor.
+      - name: Tests
+        run: pytest
+
+      # Set iteration order is randomised per process. A sibling repo shipped a
+      # tool that answered the same question differently on different runs
+      # because of exactly that, so it is cheap to rule out here.
+      - name: Tests again under a different hash seed
+        run: pytest
+        env:
+          PYTHONHASHSEED: 1

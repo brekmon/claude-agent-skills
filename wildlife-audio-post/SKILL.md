@@ -84,7 +84,7 @@ comes from the clip's own quiet frames:
 5. Resynthesise with the original phase
 
 On real footage this dropped the floor 8–14 dB while the transients moved by
-**0–1 dB**. See `scripts/_specsub_draft.py` for a working implementation.
+**0–1 dB**. See `scripts/denoise.py` for a working implementation.
 
 Starting values: `oversubtraction 2.5–4.0`, `floor 0.06–0.10`. Deeper is often
 fine — verify rather than assume, using the warble check below.

@@ -40,7 +40,14 @@ def load(path, stream=0, hp=200):
 
 def stft(x):
     w = np.hanning(NFFT)
-    n = 1 + max(0, (len(x) - NFFT)) // HOP
+    # A clip shorter than one frame (under ~43 ms at 48k) cannot be analysed.
+    # This used to compute n = 1 anyway and then multiply a short slice by the
+    # full window, raising a broadcast ValueError. denoise() already guards with
+    # `if S.size == 0`, so an empty return is what the caller was written to
+    # expect; a crash was never the intent.
+    if len(x) < NFFT:
+        return np.empty((0, NFFT // 2 + 1), dtype=complex)
+    n = 1 + (len(x) - NFFT) // HOP
     return np.array([np.fft.rfft(x[i * HOP:i * HOP + NFFT] * w) for i in range(n)])
 
 
